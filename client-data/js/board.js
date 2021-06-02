@@ -732,11 +732,12 @@ function updateDocumentTitle() {
 	var scrollTimeout, lastStateUpdate = Date.now();
 
 	function zoom(scale, x, y) {
+		if (Math.abs(scale - oldScale) < 0.05) return
+		var oldScale = Tools.getScale();
 		var pageX = window.scrollX + x
 		var pageY = window.scrollY + y
-		var x = pageX / scale;
-		var y = pageY / scale;
-		var oldScale = Tools.getScale();
+		var x = pageX / oldScale;
+		var y = pageY / oldScale;
 		var newScale = Tools.setScale(scale);
 		window.scrollTo(
 			window.scrollX + x * (newScale - oldScale),
@@ -746,7 +747,7 @@ function updateDocumentTitle() {
 
 	document.getElementById("board").addEventListener("wheel", function onWheel(event) {
 		event.preventDefault();
-		zoom(Tools.getScale()+event.deltaY*-0.005, event.clientX, event.clientY);
+		zoom(Tools.getScale()+event.deltaY*-0.01, event.clientX, event.clientY);
 		Tools.change("Hand")
 	});
 

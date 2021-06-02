@@ -50,15 +50,16 @@
 	}
 
 	function zoom(scale, x, y) {
-		var pageX = window.scrollX + x
-		var pageY = window.scrollY + y
-		var x = pageX / scale;
-		var y = pageY / scale;
 		var oldScale = Tools.getScale();
+		if( Math.abs(scale - oldScale) < 0.05) return
+		var pageX = window.scrollX + pinchStart.centerX
+		var pageY = window.scrollY + pinchStart.centerY
+		var x = pageX / oldScale;
+		var y = pageY / oldScale;
 		var newScale = Tools.setScale(scale);
 		window.scrollTo(
-			window.scrollX + x * (newScale - oldScale),
-			window.scrollY + y * (newScale - oldScale)
+			scrollX + x * (newScale - oldScale),
+			scrollY + y * (newScale - oldScale)
 		);
 	}
 
@@ -80,10 +81,16 @@
 		}
 	});
 
+	var lastEvent = new Date().getTime();
+
 	mc.on("pinch", event => {
-		zoom(pinchStart.scale * event.scale,
-			event.center.x,
-			event.center.y);
+		var now = new Date().getTime();
+		if(now - lastEvent > 50) {
+			zoom(pinchStart.scale * event.scale,
+				event.center.x,
+				event.center.y);
+			lastEvent = now;
+		}
 	});
 
 	mc.on("pinchend", event => {
