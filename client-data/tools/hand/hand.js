@@ -41,7 +41,7 @@
 		orig.y = scrollY + clientCoords(evt).clientY;
 	}
 	function move(x, y, evt, isTouchEvent) {
-		if (pressed) {
+		if (pressed && !pinching) {
 			window.scrollTo(orig.x - clientCoords(evt).clientX, orig.y - clientCoords(evt).clientY);
 		}
 	}
@@ -54,10 +54,11 @@
 		var pageY = window.scrollY + y
 		var x = pageX / scale;
 		var y = pageY / scale;
+		var oldScale = Tools.getScale();
 		var newScale = Tools.setScale(scale);
 		window.scrollTo(
-			pinchStartOrigin.x + x * (newScale - pinchStartScale),
-			pinchStartOrigin.y + y * (newScale - pinchStartScale)
+			window.scrollX + x * (newScale - oldScale),
+			window.scrollY + y * (newScale - oldScale)
 		);
 	}
 
@@ -65,23 +66,30 @@
 	mc.add(new Hammer.Pinch());
 	mc.get('pinch').set({ enable: false });
 
-	var pinchStartScale = 0
-	var pinchStartOrigin = {}
+	var pinchStart = {}
+	var pinching = false
 	mc.on("pinchstart", event => {
+		pinching = true
 		gtag('event', 'click', { 'event_category': 'pinch' });
-		pinchStartScale = Tools.getScale();
-		pinchStartOrigin = {
-			x: window.scrollX,
-			y: window.scrollY,
+		pinchStart = {
+			scale: Tools.getScale(),
+			scrollX: window.scrollX,
+			scrollY: window.scrollY,
+			centerX: event.center.x,
+			centerY: event.center.y,
 		}
 	});
 
 	mc.on("pinch", event => {
-		pressed = false
-		zoom(pinchStartScale * event.scale,
+		zoom(pinchStart.scale * event.scale,
 			event.center.x,
 			event.center.y);
 	});
+
+	mc.on("pinchend", event => {
+		pinching = false
+	});
+
 
 	function onStart() {
 		gtag('event', 'click', { 'event_category': 'pan' });
