@@ -19,10 +19,10 @@
 			}, 1000)
 		}
 		if (!menuInitialized) initMenu(elem);
+		setTimeout(updateMirrorButton, 500);
 	};
 
 	var menuInitialized = false;
-	var button;
 
 	function initMenu(elem) {
 		button = elem;
@@ -243,6 +243,30 @@
 		}
 	}
 
+	var mirrorStatus = "LINKED";
+
+	function updateMirrorButton() {
+		if(mirrorStatus == "LINKED") {
+			document.getElementById("submenu-mirror").classList.add("linked");
+			document.getElementById("toolID-File").classList.add("linked");
+		} else {
+			document.getElementById("submenu-mirror").classList.remove("linked");
+			document.getElementById("toolID-File").classList.remove("linked");
+		}
+		if (mirrorStatus == "NOT_LINKED") {
+			if(document.getElementById("usercount").textContent == 2) {
+				document.getElementById("submenu-mirror").classList.add("active");
+			} else {
+				document.getElementById("submenu-mirror").classList.remove("active");
+			}
+		}
+		if (mirrorStatus == "LINKING") {
+			document.getElementById("submenu-mirror").classList.add("linking");
+		} else {
+			document.getElementById("submenu-mirror").classList.remove("linking");
+		}
+	}
+
 	Tools.add({
 		"iconHTML": "<i class='fa fa-folder'></i>",
 		"name": "File",
@@ -261,14 +285,18 @@
 						<div class="tool-extra submenu-file" id="submenu-png" title="Export as PNG">
 							<span class="tool-icon"><i class="fas fa-file-export"></i></span>
 						</div>
+
 						<div class="tool-extra submenu-file digit" id="submenu-digit-0" title="Sharing code active when the menu is open">
-
 						</div>
+
 						<div class="tool-extra submenu-file digit" id="submenu-digit-1" title="Sharing code active when the menu is open">
-
 						</div>
-						<div class="tool-extra submenu-file digit" id="submenu-digit-2" title="Sharing code active when the menu is open">
 
+						<div class="tool-extra submenu-file digit" id="submenu-digit-2" title="Sharing code active when the menu is open">
+						</div>
+
+						<div class="tool-extra submenu-file" id="submenu-mirror" title="Link devices together">
+							<span id="mirror-icon" class="tool-icon"><i class="fas fa-network-wired"></i></span>
 						</div>`,
 			"listener": menuListener
 		},
@@ -278,5 +306,7 @@
 		"onstart": onStart,
 		"onquit": onQuit
 	});
+
+	updateMirrorButton();
 
 })();

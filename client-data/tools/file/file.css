@@ -16,3 +16,15 @@
 .digit:hover {
     border-bottom: 2px solid #999;
 }
+
+@keyframes blinker {
+  50% { opacity: 0; }
+}
+
+#submenu-mirror.linking {
+  animation: blinker 0.6s linear infinite;
+}
+
+.linked .tool-icon {
+  color: #3344cc;
+}

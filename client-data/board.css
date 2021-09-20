@@ -264,6 +264,7 @@ html, body, svg {
 	border-radius: 3px;
 	left: 6px !important;
 	top: -1px !important;
+	max-width: 400px !important;
 }
 
 .popover .popover-body {
